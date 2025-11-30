@@ -1,0 +1,96 @@
+[1mdiff --git a/deps/googletest b/deps/googletest[m
+[1mindex 2dd1c13..6ec14df 160000[m
+[1m--- a/deps/googletest[m
+[1m+++ b/deps/googletest[m
+[36m@@ -1 +1 @@[m
+[31m-Subproject commit 2dd1c131950043a8ad5ab0d2dda0e0970596586a[m
+[32m+[m[32mSubproject commit 6ec14dfd8c409d05fba94e18e3a02df35b874353[m
+[1mdiff --git a/src/storage/buffer_pool_manager.h b/src/storage/buffer_pool_manager.h[m
+[1mindex 0a5c152..3b309cd 100644[m
+[1m--- a/src/storage/buffer_pool_manager.h[m
+[1m+++ b/src/storage/buffer_pool_manager.h[m
+[36m@@ -1,73 +1,73 @@[m
+[31m-#pragma once[m
+[31m-#include <fcntl.h>[m
+[31m-#include <unistd.h>[m
+[31m-[m
+[31m-#include <cassert>[m
+[31m-#include <list>[m
+[31m-#include <unordered_map>[m
+[31m-#include <vector>[m
+[31m-[m
+[31m-#include "disk_manager.h"[m
+[31m-#include "errors.h"[m
+[31m-#include "page.h"[m
+[31m-#include "replacer/lru_replacer.h"[m
+[31m-#include "replacer/replacer.h"[m
+[31m-[m
+[31m-class BufferPoolManager {[m
+[31m-   private:[m
+[31m-    size_t pool_size_;      // buffer_pool中可容纳页面的个数，即帧的个数[m
+[31m-    Page *pages_;           // buffer_pool中的Page对象数组，在构造空间中申请内存空间，在析构函数中释放，大小为BUFFER_POOL_SIZE[m
+[31m-    std::unordered_map<PageId, frame_id_t, PageIdHash> page_table_; // 帧号和页面号的映射哈希表，用于根据页面的PageId定位该页面的帧编号[m
+[31m-    std::list<frame_id_t> free_list_;   // 空闲帧编号的链表[m
+[31m-    DiskManager *disk_manager_;[m
+[31m-    Replacer *replacer_;    // buffer_pool的置换策略，当前赛题中为LRU置换策略[m
+[31m-    std::mutex latch_;      // 用于共享数据结构的并发控制[m
+[31m-[m
+[31m-   public:[m
+[31m-    BufferPoolManager(size_t pool_size, DiskManager *disk_manager)[m
+[31m-        : pool_size_(pool_size), disk_manager_(disk_manager) {[m
+[31m-        // 为buffer pool分配一块连续的内存空间[m
+[31m-        pages_ = new Page[pool_size_];[m
+[31m-        // 可以被Replacer改变[m
+[31m-        if (REPLACER_TYPE.compare("LRU"))[m
+[31m-            replacer_ = new LRUReplacer(pool_size_);[m
+[31m-        else if (REPLACER_TYPE.compare("CLOCK"))[m
+[31m-            replacer_ = new LRUReplacer(pool_size_);[m
+[31m-        else {[m
+[31m-            replacer_ = new LRUReplacer(pool_size_);[m
+[31m-        }[m
+[31m-        // 初始化时，所有的page都在free_list_中[m
+[31m-        for (size_t i = 0; i < pool_size_; ++i) {[m
+[31m-            free_list_.emplace_back(static_cast<frame_id_t>(i));  // static_cast转换数据类型[m
+[31m-        }[m
+[31m-    }[m
+[31m-[m
+[31m-    ~BufferPoolManager() {[m
+[31m-        delete[] pages_;[m
+[31m-        delete replacer_;[m
+[31m-    }[m
+[31m-[m
+[31m-    /**[m
+[31m-     * @description: 将目标页面标记为脏页[m
+[31m-     * @param {Page*} page 脏页[m
+[31m-     */[m
+[31m-    static void mark_dirty(Page* page) { page->is_dirty_ = true; }[m
+[31m-[m
+[31m-   public: [m
+[31m-    Page* fetch_page(PageId page_id);[m
+[31m-[m
+[31m-    bool unpin_page(PageId page_id, bool is_dirty);[m
+[31m-[m
+[31m-    bool flush_page(PageId page_id);[m
+[31m-[m
+[31m-    Page* new_page(PageId* page_id);[m
+[31m-[m
+[31m-    bool delete_page(PageId page_id);[m
+[31m-[m
+[31m-    void flush_all_pages(int fd);[m
+[31m-[m
+[31m-   private:[m
+[31m-    bool find_victim_page(frame_id_t* frame_id);[m
+[31m-[m
+[31m-    void update_page(Page* page, PageId new_page_id, frame_id_t new_frame_id);[m
+[32m+[m[32m#pragma once[m[41m[m
+[32m+[m[32m#include <fcntl.h>[m[41m[m
+[32m+[m[32m#include <unistd.h>[m[41m[m
+[32m+[m[41m[m
+[32m+[m[32m#include <cassert>[m[41m[m
+[32m+[m[32m#include <list>[m[41m[m
+[32m+[m[32m#include <unordered_map>[m[41m[m
+[32m+[m[32m#include <vector>[m[41m[m
+[32m+[m[41m[m
+[32m+[m[32m#include "disk_manager.h"[m[41m[m
+[32m+[m[32m#include "errors.h"[m[41m[m
+[32m+[m[32m#include "page.h"[m[4

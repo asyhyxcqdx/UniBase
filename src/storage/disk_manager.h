@@ -77,11 +77,12 @@ class DiskManager {
      */
     page_id_t get_fd2pageno(int fd) { return fd2pageno_[fd]; }
 
-    static constexpr int MAX_FD = 8192;
+   static constexpr int MAX_FD = 8192;
 
    private:
     // 文件打开列表，用于记录文件是否被打开
     std::unordered_map<std::string, int> path2fd_;  //<Page文件磁盘路径,Page fd>哈希表
+    std::unordered_map<std::string, int> path_refcnt_;  // 记录每个已打开文件的引用计数
     std::unordered_map<int, std::string> fd2path_;  //<Page fd,Page文件磁盘路径>哈希表
 
     int log_fd_ = -1;                             // WAL日志文件的文件句柄，默认为-1，代表未打开日志文件
