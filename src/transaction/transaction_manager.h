@@ -2,6 +2,7 @@
 
 #include <atomic>
 #include <unordered_map>
+#include <mutex>
 
 #include "transaction.h"
 #include "recovery/log_manager.h"
